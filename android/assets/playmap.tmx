@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.2.4" orientation="orthogonal" renderorder="right-down" width="4" height="4" tilewidth="168" tileheight="168" infinite="0" nextlayerid="7" nextobjectid="14">
+ <tileset firstgid="1" name="background" tilewidth="168" tileheight="168" tilecount="17" columns="0">
+  <grid orientation="orthogonal" width="1" height="1"/>
+  <tile id="0">
+   <image width="168" height="168" source="maptiles/desert1.png"/>
+  </tile>
+  <tile id="1">
+   <image width="168" height="168" source="maptiles/desert2.png"/>
+  </tile>
+  <tile id="2">
+   <image width="168" height="168" source="maptiles/desert3.png"/>
+  </tile>
+  <tile id="3">
+   <image width="168" height="168" source="maptiles/grass1.png"/>
+  </tile>
+  <tile id="4">
+   <image width="168" height="168" source="maptiles/grass2.png"/>
+  </tile>
+  <tile id="5">
+   <image width="168" height="168" source="maptiles/grass3.png"/>
+  </tile>
+  <tile id="6">
+   <image width="168" height="168" source="maptiles/transitional1.png"/>
+  </tile>
+  <tile id="7">
+   <image width="168" height="168" source="maptiles/transitional2.png"/>
+  </tile>
+  <tile id="8">
+   <image width="168" height="168" source="maptiles/transitional3.png"/>
+  </tile>
+  <tile id="9">
+   <image width="168" height="168" source="maptiles/transitional4.png"/>
+  </tile>
+  <tile id="10">
+   <image width="168" height="168" source="maptiles/transitional5.png"/>
+  </tile>
+  <tile id="11">
+   <image width="168" height="168" source="maptiles/transitional6.png"/>
+  </tile>
+  <tile id="12">
+   <image width="168" height="168" source="maptiles/transitional7.png"/>
+  </tile>
+  <tile id="13">
+   <image width="168" height="168" source="maptiles/transitional8.png"/>
+  </tile>
+  <tile id="14">
+   <image width="168" height="168" source="maptiles/transitional9.png"/>
+  </tile>
+  <tile id="15">
+   <image width="168" height="168" source="maptiles/transitional10.png"/>
+  </tile>
+  <tile id="16">
+   <image width="168" height="168" source="maptiles/transitional11.png"/>
+  </tile>
+ </tileset>
+ <layer id="2" name="background" width="4" height="4">
+  <data encoding="base64" compression="zlib">
+   eJxjZmBg4IViZiDmAmIWKObDwgep4YZiRiAGABDgAHs=
+  </data>
+ </layer>
+ <objectgroup id="6" name="barriers">
+  <object id="8" x="0" y="0" width="84" height="672"/>
+  <object id="9" x="0" y="588" width="672" height="84"/>
+  <object id="10" x="0" y="0" width="672" height="84"/>
+  <object id="12" x="588" y="0" width="84" height="672"/>
+  <object id="13" x="-316" y="-306"/>
+ </objectgroup>
+</map>
