@@ -19,7 +19,7 @@ public class WorldContactListener implements ContactListener {
             Tank tank = (Tank) (fixtureA.getUserData() instanceof Tank ? fixtureA.getUserData() : fixtureB.getUserData());
             Bullet bullet = (Bullet) (fixtureA.getUserData() instanceof Bullet ? fixtureA.getUserData() : fixtureB.getUserData());
 
-            if (bullet.getFiredTank() != tank && tank.getState() != Tank.TankState.DESTROYED) {
+            if (bullet.getFiredTank() != tank && tank.getState() != Tank.TankState.DESTROYED && !bullet.isCollided()) {
                 tank.takeDamage(Bullet.BULLET_DAMAGE);
                 bullet.handleCollisionWithTank();
             }

@@ -2,6 +2,7 @@ package com.jaeheonshim.tankwars.sprites;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -26,7 +27,7 @@ import java.util.Random;
 import java.util.Vector;
 
 public class Tank {
-    public static float TURN_AMOUNT = 90;
+    public static float TURN_AMOUNT = 130;
     public static float TANK_SPEED = 200;
 
     public static float GUN_OFFSET_X = 53;
@@ -45,6 +46,10 @@ public class Tank {
     private Texture tankDestroyedTexture;
     private Texture tankHPTexture;
     private Animation<TextureRegion> driveAnimation;
+
+    private Sound gunshot;
+    private Sound tankHit;
+    private Sound explosion;
 
     private ArrayList<Bullet> firedBullets;
     private Random random;
@@ -66,6 +71,10 @@ public class Tank {
         tankDestroyedTexture = new Texture("tank1damaged.png");
         tankHPTexture = new Texture("hp-mini1.png");
         initAnimations();
+
+        gunshot = Gdx.audio.newSound(Gdx.files.internal("gunshot.mp3"));
+        tankHit = Gdx.audio.newSound(Gdx.files.internal("tank-hit.mp3"));
+        explosion = Gdx.audio.newSound(Gdx.files.internal("explosion.mp3"));
 
         firedBullets = new ArrayList<>();
 
@@ -166,7 +175,6 @@ public class Tank {
             bulletX -= (6 * angle) / 90;
         } else if(angle > 90 && angle <= 180) {
             float amount = (angle - 90) / 90;
-            System.out.println(amount);
             bulletY -= 5 * amount;
             bulletX -= 6;
         } else if(angle > 180 && angle <= 270) {
@@ -174,6 +182,7 @@ public class Tank {
             bulletY -= 5 * (1f - amount);
         }
 
+        gunshot.play();
         new Bullet(new Vector2(bulletX, bulletY), bulletAngle, world, this);
     }
 
@@ -194,6 +203,10 @@ public class Tank {
     }
 
     public void update(float dt) {
+        if(Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+            state = TankState.IDLE;
+            health = 100;
+        }
         if(state != TankState.DESTROYED) {
             handleInput(dt);
             body.setTransform(position.x + tankTexture.getWidth() / 2, position.y + tankTexture.getHeight() / 2, (float) Math.toRadians(angle));
@@ -246,11 +259,16 @@ public class Tank {
         health -= damage;
         if(health <= 0) {
             state = TankState.DESTROYED;
+            explosion.play();
+        } else {
+            tankHit.play();
         }
     }
 
     public void dispose() {
         tankTexture.dispose();
+        tankHit.dispose();
+        gunshot.dispose();
     }
 
     public enum TurnDirection {

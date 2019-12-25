@@ -151,6 +151,10 @@ public class Bullet {
         bulletTexture.dispose();
     }
 
+    public boolean isCollided() {
+        return collided;
+    }
+
     public static List<Bullet> getInstances() {
         return instances;
     }

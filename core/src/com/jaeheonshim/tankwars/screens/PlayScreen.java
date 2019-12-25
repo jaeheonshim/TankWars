@@ -135,7 +135,7 @@ public class PlayScreen implements Screen {
             bullet.render(batch);
         }
 
-        //b2dr.render(world, camera.combined);
+        b2dr.render(world, camera.combined);
     }
 
     @Override
