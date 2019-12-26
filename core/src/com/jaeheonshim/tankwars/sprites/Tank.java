@@ -103,7 +103,8 @@ public class Tank {
 
         FixtureDef fixtureDef = new FixtureDef();
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(tankTexture.getWidth() / 2, tankTexture.getHeight() / 2);
+
+        shape.setAsBox(24, 22.5f, new Vector2(0 - 6, 0), 0);
 
         fixtureDef.shape = shape;
         body.createFixture(fixtureDef).setUserData(this);
