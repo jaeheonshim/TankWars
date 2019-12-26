@@ -171,19 +171,6 @@ public class Tank {
         float bulletX = (rotatedPoint.x + (GUN_OFFSET_X * MathUtils.cosDeg(angle) - GUN_OFFSET_Y * MathUtils.sinDeg(angle)));
         float bulletY = (rotatedPoint.y + (GUN_OFFSET_X * MathUtils.sinDeg(angle) + GUN_OFFSET_Y * MathUtils.cosDeg(angle)));
 
-
-        //Bullet position correction - super sketchy way of doing it
-        if(angle <= 90) {
-            bulletX -= (6 * angle) / 90;
-        } else if(angle > 90 && angle <= 180) {
-            float amount = (angle - 90) / 90;
-            bulletY -= 5 * amount;
-            bulletX -= 6;
-        } else if(angle > 180 && angle <= 270) {
-            float amount = (angle - 180) / 90;
-            bulletY -= 5 * (1f - amount);
-        }
-
         gunshot.play();
         new Bullet(new Vector2(bulletX, bulletY), bulletAngle, world, this);
     }
@@ -212,6 +199,7 @@ public class Tank {
         if(Gdx.input.isKeyJustPressed(Input.Keys.R)) {
             state = TankState.IDLE;
             health = 100;
+            body.setType(BodyDef.BodyType.DynamicBody);
         }
         if(state != TankState.DESTROYED) {
             handleInput(dt);
@@ -237,6 +225,9 @@ public class Tank {
                     bulletIterator.remove();
                 }
             }
+        } else {
+            body.setLinearVelocity(0, 0);
+            body.setType(BodyDef.BodyType.StaticBody);
         }
     }
 
@@ -291,6 +282,10 @@ public class Tank {
 
     public enum TankState {
         IDLE, FIRING, DRIVING, DESTROYED
+    }
+
+    public enum TankTexture {
+
     }
 
     public Polygon getBounds() {
