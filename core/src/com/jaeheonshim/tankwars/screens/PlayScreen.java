@@ -31,7 +31,9 @@ import com.jaeheonshim.tankwars.sprites.Bullet;
 import com.jaeheonshim.tankwars.sprites.Tank;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import static com.jaeheonshim.tankwars.sprites.Tank.TANK_SPEED;
 import static com.jaeheonshim.tankwars.sprites.Tank.TURN_AMOUNT;
@@ -51,6 +53,10 @@ public class PlayScreen implements Screen {
     private World world;
     private Box2DDebugRenderer b2dr;
 
+    private int updateCycle;
+
+    public static Set<Bullet> pendingDestroyBullets;
+
     public PlayScreen(SpriteBatch batch) {
         this.batch = batch;
         camera = new OrthographicCamera();
@@ -66,15 +72,17 @@ public class PlayScreen implements Screen {
         TankInputConfig rightPlayer = new TankInputConfig(Input.Keys.W, Input.Keys.S, Input.Keys.A, Input.Keys.D, Input.Keys.Q);
         TankInputConfig leftPlayer = new TankInputConfig(Input.Keys.UP, Input.Keys.DOWN, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.SLASH);
 
-        tank = new Tank(new Vector2(0, 0), world, rightPlayer);
-        tank1 = new Tank(new Vector2(70, 30), world, leftPlayer);
+        tank = new Tank(new Vector2(400, 400), world, rightPlayer);
+        tank1 = new Tank(new Vector2(200, 200), world, leftPlayer);
 
         BodyDef bdef = new BodyDef();
         PolygonShape shape = new PolygonShape();
         FixtureDef fdef = new FixtureDef();
         Body body;
 
-        for(MapObject object : map.getLayers().get(1).getObjects().getByType(RectangleMapObject.class)) {
+        pendingDestroyBullets = new HashSet<>();
+
+        for (MapObject object : map.getLayers().get(1).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
             bdef.type = BodyDef.BodyType.StaticBody;
@@ -86,6 +94,8 @@ public class PlayScreen implements Screen {
             fdef.shape = shape;
             body.createFixture(fdef);
         }
+
+        updateCycle = 0;
     }
 
     @Override
@@ -94,6 +104,7 @@ public class PlayScreen implements Screen {
     }
 
     public void update(float dt) {
+        updateCycle++;
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
         camera.update();
 
@@ -106,13 +117,19 @@ public class PlayScreen implements Screen {
         // Fucking ConcurrentModificationExceptions
         while (bulletIterator.hasNext()) {
             Bullet bullet = bulletIterator.next();
-            if (bullet.dispose) {
-                bulletIterator.remove();
-            }
             bullet.update(dt);
         }
 
         world.step(1 / 60f, 6, 2);
+
+        bulletIterator = Bullet.getInstances().iterator();
+        while (bulletIterator.hasNext()) {
+            Bullet bullet = bulletIterator.next();
+            if(bullet.dispose) {
+                world.destroyBody(bullet.getBody());
+                bulletIterator.remove();
+            }
+        }
     }
 
     @Override

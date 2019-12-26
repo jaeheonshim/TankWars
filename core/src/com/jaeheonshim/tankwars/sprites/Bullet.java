@@ -14,12 +14,14 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.jaeheonshim.tankwars.TankGame;
+import com.jaeheonshim.tankwars.screens.PlayScreen;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Bullet {
-    public static float BULLET_SPEED = 350;
+    public static float BULLET_SPEED = 320;
     public static float BULLET_LIFE_TIME = 1;
     public static float BULLET_DAMAGE = 10;
 
@@ -92,12 +94,15 @@ public class Bullet {
     }
 
     public void update(float dt) {
+        if(timer > BULLET_LIFE_TIME) {
+            this.dispose();
+            dispose = true;
+        }
         if (!collided) {
             timer += dt;
             this.position.x += MathUtils.cosDeg(angle) * BULLET_SPEED * dt;
             this.position.y += MathUtils.sinDeg(angle) * BULLET_SPEED * dt;
-            bounds.rotate(angle);
-            bounds.setPosition(this.position.x, this.position.y);
+
             body.setTransform(this.position.x + bulletTexture.getWidth() / 2, this.position.y + bulletTexture.getHeight() / 2, angle);
         } else {
             collisionAnimationST += dt;
@@ -111,7 +116,7 @@ public class Bullet {
     public void render(SpriteBatch batch) {
         batch.begin();
         if(!collided) {
-            batch.draw(getTexture(), position.x, position.y, getTexture().getRegionWidth() / 2, getTexture().getRegionHeight() / 2, getTexture().getRegionWidth(), getTexture().getRegionHeight(), 1, 1, angle);
+            batch.draw(getTexture(), body.getPosition().x, body.getPosition().y, getTexture().getRegionWidth() / 2, getTexture().getRegionHeight() / 2, getTexture().getRegionWidth(), getTexture().getRegionHeight(), 1, 1, angle);
         } else {
             batch.draw(getTexture(), body.getPosition().x - getTexture().getRegionWidth() / 2, body.getPosition().y - getTexture().getRegionHeight() / 2, getTexture().getRegionWidth() / 2, getTexture().getRegionHeight() / 2, getTexture().getRegionWidth(), getTexture().getRegionHeight(), 1, 1, angle);
         }
@@ -157,5 +162,9 @@ public class Bullet {
 
     public static List<Bullet> getInstances() {
         return instances;
+    }
+
+    public Body getBody() {
+        return body;
     }
 }

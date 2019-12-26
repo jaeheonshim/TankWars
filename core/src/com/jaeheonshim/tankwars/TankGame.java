@@ -11,6 +11,7 @@ import com.jaeheonshim.tankwars.screens.PlayScreen;
 public class TankGame extends Game {
 	public static final int V_WIDTH = 4 * 168;
 	public static final int V_HEIGHT = 4 * 168;
+	public static final float PPM = 45;
 
 	SpriteBatch batch;
 	

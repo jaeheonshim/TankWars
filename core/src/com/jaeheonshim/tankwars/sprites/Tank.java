@@ -130,20 +130,22 @@ public class Tank {
         if(direction == TurnDirection.LEFT) {
             angle += amount;
             angle = angle > 360 ? angle - ((int) angle) / 360 * 360 : angle;
+            body.setAngularVelocity(2);
+            System.out.println(body.getAngle());
         } else if(direction == TurnDirection.RIGHT) {
             angle -= amount;
             float tempAngle = angle < -360 ? angle + ((int) -angle) / 360 * 360 : angle;
-            angle = angle < 0 ? 360 - -tempAngle : angle ;
+            angle = angle < 0 ? 360 - -tempAngle : angle;
+            body.setAngularVelocity(-2);
         }
     }
 
     public void drive(float speed) {
         state = TankState.DRIVING;
-        float xAccel = MathUtils.cosDeg(angle) * speed;
-        float yAccel = MathUtils.sinDeg(angle) * speed;
+        float xAccel = MathUtils.cos(body.getAngle()) * speed;
+        float yAccel = MathUtils.sin(body.getAngle()) * speed;
 
-        position.x += xAccel;
-        position.y += yAccel;
+        body.setLinearVelocity(xAccel * TankGame.PPM, yAccel * TankGame.PPM);
 
         if(position.x < 0 || position.x > TankGame.V_WIDTH) {
             position.x -= xAccel;
@@ -191,11 +193,15 @@ public class Tank {
             turn(Tank.TurnDirection.LEFT, TURN_AMOUNT * dt);
         } else if (Gdx.input.isKeyPressed(inputConfig.getTurnRight())) {
             turn(Tank.TurnDirection.RIGHT, TURN_AMOUNT * dt);
+        } else {
+            body.setAngularVelocity(0);
         }
         if (Gdx.input.isKeyPressed(inputConfig.getDriveForward())) {
             drive(TANK_SPEED * dt);
         } else if (Gdx.input.isKeyPressed(inputConfig.getDriveBackward())) {
             drive(-TANK_SPEED * dt);
+        } else {
+            body.setLinearVelocity(0, 0);
         }
         if (Gdx.input.isKeyJustPressed(inputConfig.getFire())) {
             fire();
@@ -209,7 +215,15 @@ public class Tank {
         }
         if(state != TankState.DESTROYED) {
             handleInput(dt);
-            body.setTransform(position.x + tankTexture.getWidth() / 2, position.y + tankTexture.getHeight() / 2, (float) Math.toRadians(angle));
+            //body.setTransform(position.x + tankTexture.getWidth() / 2, position.y + tankTexture.getHeight() / 2, (float) Math.toRadians(angle));
+
+            // ahhhhhhhhhhhh!! We're all going to die
+            position.x = body.getPosition().x - getTexture().getRegionWidth() / 2;
+            position.y = body.getPosition().y - getTexture().getRegionHeight() / 2;
+            // end ahhhhhhhhh!!
+
+            angle = body.getAngle() * MathUtils.radiansToDegrees;
+
             stateTime += dt;
             state = TankState.IDLE;
 
@@ -246,7 +260,7 @@ public class Tank {
 
     public void render(SpriteBatch batch){
         batch.begin();
-        batch.draw(getTexture(), position.x, position.y, getTexture().getRegionWidth() / 2, getTexture().getRegionHeight() / 2, getTexture().getRegionWidth(), getTexture().getRegionHeight(), 1, 1, angle);
+        batch.draw(getTexture(), body.getPosition().x - getTexture().getRegionWidth() / 2, body.getPosition().y - getTexture().getRegionHeight() / 2, getTexture().getRegionWidth() / 2, getTexture().getRegionHeight() / 2, getTexture().getRegionWidth(), getTexture().getRegionHeight(), 1, 1, MathUtils.radiansToDegrees * body.getAngle());
         batch.draw(tankHPTexture, position.x, position.y + 50, (tankHPTexture.getWidth() * (health / 100)), tankHPTexture.getHeight());
         batch.end();
     }
