@@ -57,6 +57,7 @@ public class Tank {
     private Texture tankHPTexture;
     private Texture driveSheet;
     private Texture explosionSheet;
+    private Texture bulletTexture;
 
     private BitmapFont font;
     private GlyphLayout glyphLayout;
@@ -91,6 +92,7 @@ public class Tank {
         driveSheet = new Texture("tanks/tank1_strip4.png");
         explosionSheet = new Texture("explosion_strip10.png");
         tankHPTexture = new Texture("hp-mini1.png");
+        bulletTexture = new Texture("bullet.png");
 
         font = new BitmapFont(Gdx.files.internal("font.fnt"));
         glyphLayout = new GlyphLayout();
@@ -273,6 +275,8 @@ public class Tank {
             stateTime = 0;
             stopWaterDamage();
             body.setTransform(initPosition, initAngle * MathUtils.degreesToRadians);
+            reloading = false;
+            bullets = 10;
         }
         if(state != TankState.DESTROYED) {
             handleInput(dt);
@@ -346,17 +350,24 @@ public class Tank {
             TextureRegion explosionFrame = explosionAnimation.getKeyFrame(stateTime, false);
             batch.draw(explosionFrame, body.getPosition().x - explosionFrame.getRegionWidth() * 2 / 2, body.getPosition().y - explosionFrame.getRegionHeight() * 2 / 2, explosionFrame.getRegionWidth() * 2, explosionFrame.getRegionHeight() * 2);
         }
-        if(reloading) {
-            font.getData().setScale(0.4f);
-            String reloadingString = String.format("%.2f", reloadTimer) + " RELOADING!!";
-            glyphLayout.setText(font, reloadingString);
-            font.draw(batch, reloadingString, body.getPosition().x - glyphLayout.width / 2, body.getPosition().y + 50);
-        }
-        batch.end();
-    }
+        if(state != TankState.DESTROYED) {
+            if (reloading) {
+                font.getData().setScale(0.4f);
+                String reloadingString = String.format("%.2f", reloadTimer) + " RELOADING!!";
+                glyphLayout.setText(font, reloadingString);
+                font.draw(batch, reloadingString, body.getPosition().x - glyphLayout.width / 2, body.getPosition().y + 50);
+            }
 
-    public void onBulletCollision() {
-        Gdx.app.log("TANK", "BULLET COLLISION");
+            if (bullets > 0) {
+                float offset = 0;
+                for (int i = 0; i < bullets; i++) {
+                    batch.draw(bulletTexture, (body.getPosition().x - tankTexture.getWidth() / 2) + offset, body.getPosition().y + 37);
+                    offset += bulletTexture.getWidth() + 1;
+                }
+            }
+        }
+
+        batch.end();
     }
 
     public void takeDamage(float damage) {
