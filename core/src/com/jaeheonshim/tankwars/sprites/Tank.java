@@ -5,6 +5,8 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -34,6 +36,7 @@ public class Tank {
     public static float GUN_OFFSET_Y = 20;
 
     public static float BULLET_SPREAD = 5;
+    public static float RELOAD_TIME = 2;
 
     private TankInputConfig inputConfig;
 
@@ -43,6 +46,9 @@ public class Tank {
     private float initAngle;
     private TankState state;
     private float health;
+    private float bullets;
+    private boolean reloading;
+    private float reloadTimer;
     private boolean takingWaterDamage = false;
     private float waterDamageCounter;
 
@@ -51,6 +57,9 @@ public class Tank {
     private Texture tankHPTexture;
     private Texture driveSheet;
     private Texture explosionSheet;
+
+    private BitmapFont font;
+    private GlyphLayout glyphLayout;
 
     private Animation<TextureRegion> driveAnimation;
     private Animation<TextureRegion> explosionAnimation;
@@ -82,6 +91,9 @@ public class Tank {
         driveSheet = new Texture("tanks/tank1_strip4.png");
         explosionSheet = new Texture("explosion_strip10.png");
         tankHPTexture = new Texture("hp-mini1.png");
+
+        font = new BitmapFont(Gdx.files.internal("font.fnt"));
+        glyphLayout = new GlyphLayout();
         initAnimations();
 
         gunshot = Gdx.audio.newSound(Gdx.files.internal("gunshot.mp3"));
@@ -108,6 +120,9 @@ public class Tank {
         this.inputConfig = config;
 
         body.setTransform(position, angle * MathUtils.degreesToRadians);
+        bullets = 10;
+        reloadTimer = RELOAD_TIME;
+        reloading = false;
     }
 
     public Tank(Vector2 position, float angle, World world, TankInputConfig config, TankTexture texture) {
@@ -208,19 +223,25 @@ public class Tank {
     }
 
     public void fire() {
-        float bulletAngle = angle;
-        if(random.nextBoolean()) {
-            bulletAngle += random.nextInt((int) BULLET_SPREAD);
-        } else {
-            bulletAngle -= random.nextInt((int) BULLET_SPREAD);
+        if(bullets > 0 && !reloading) {
+            float bulletAngle = angle;
+            if (random.nextBoolean()) {
+                bulletAngle += random.nextInt((int) BULLET_SPREAD);
+            } else {
+                bulletAngle -= random.nextInt((int) BULLET_SPREAD);
+            }
+
+            Vector2 rotationAbsolute = new Vector2(body.getPosition().x, body.getPosition().y);
+
+            float bulletX = rotationAbsolute.x + 20 * MathUtils.cosDeg(angle);
+            float bulletY = rotationAbsolute.y + 20 * MathUtils.sinDeg(angle);
+            gunshot.play();
+            new Bullet(new Vector2(bulletX, bulletY), bulletAngle, world, this);
+            bullets--;
+            if(bullets <= 0) {
+                reloading = true;
+            }
         }
-
-        Vector2 rotationAbsolute = new Vector2(body.getPosition().x, body.getPosition().y);
-
-        float bulletX = rotationAbsolute.x + 20 * MathUtils.cosDeg(angle);
-        float bulletY = rotationAbsolute.y + 20 * MathUtils.sinDeg(angle);
-        gunshot.play();
-        new Bullet(new Vector2(bulletX, bulletY), bulletAngle, world, this);
     }
 
     public void handleInput(float dt) {
@@ -284,6 +305,15 @@ public class Tank {
                     waterDamageCounter = 0;
                 }
             }
+
+            if(reloading) {
+                reloadTimer -= dt;
+                if(reloadTimer <= 0) {
+                    reloadTimer = RELOAD_TIME;
+                    reloading = false;
+                    bullets = 10;
+                }
+            }
         } else {
             body.setLinearVelocity(0, 0);
             body.setType(BodyDef.BodyType.StaticBody);
@@ -315,6 +345,12 @@ public class Tank {
         if(state == TankState.DESTROYED && !explosionAnimation.isAnimationFinished(stateTime)) {
             TextureRegion explosionFrame = explosionAnimation.getKeyFrame(stateTime, false);
             batch.draw(explosionFrame, body.getPosition().x - explosionFrame.getRegionWidth() * 2 / 2, body.getPosition().y - explosionFrame.getRegionHeight() * 2 / 2, explosionFrame.getRegionWidth() * 2, explosionFrame.getRegionHeight() * 2);
+        }
+        if(reloading) {
+            font.getData().setScale(0.4f);
+            String reloadingString = String.format("%.2f", reloadTimer) + " RELOADING!!";
+            glyphLayout.setText(font, reloadingString);
+            font.draw(batch, reloadingString, body.getPosition().x - glyphLayout.width / 2, body.getPosition().y + 50);
         }
         batch.end();
     }
