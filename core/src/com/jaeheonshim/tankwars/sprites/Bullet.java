@@ -55,7 +55,7 @@ public class Bullet {
         timer = 0;
 
         bounds = new Polygon(new float[]{position.x, position.y, position.x, position.y + bulletTexture.getHeight(), position.x + bulletTexture.getWidth(), position.y + bulletTexture.getHeight(), position.x + bulletTexture.getWidth(), position.y});
-        bounds.setOrigin(position.x + bulletTexture.getWidth() / 2, position.y + bulletTexture.getHeight() / 2);
+        bounds.setOrigin(position.x, position.y);
         bounds.setRotation(angle);
         this.world = world;
         definePhysics();
@@ -103,7 +103,7 @@ public class Bullet {
             this.position.x += MathUtils.cosDeg(angle) * BULLET_SPEED * dt;
             this.position.y += MathUtils.sinDeg(angle) * BULLET_SPEED * dt;
 
-            body.setTransform(this.position.x + bulletTexture.getWidth() / 2, this.position.y + bulletTexture.getHeight() / 2, angle);
+            body.setTransform(this.position.x, this.position.y, angle);
         } else {
             collisionAnimationST += dt;
             if(collisionAnimation.isAnimationFinished(collisionAnimationST)) {

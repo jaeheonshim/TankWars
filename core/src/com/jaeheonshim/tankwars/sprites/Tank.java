@@ -38,7 +38,9 @@ public class Tank {
     private TankInputConfig inputConfig;
 
     private Vector2 position;
+    private Vector2 initPosition;
     private float angle;
+    private float initAngle;
     private TankState state;
     private float health;
     private boolean takingWaterDamage = false;
@@ -47,8 +49,11 @@ public class Tank {
     private Texture tankTexture;
     private Texture tankDestroyedTexture;
     private Texture tankHPTexture;
-    Texture driveSheet;
+    private Texture driveSheet;
+    private Texture explosionSheet;
+
     private Animation<TextureRegion> driveAnimation;
+    private Animation<TextureRegion> explosionAnimation;
 
     private Sound gunshot;
     private Sound tankHit;
@@ -68,11 +73,14 @@ public class Tank {
 
     public Tank(Vector2 position, float angle, World world, TankInputConfig config) {
         this.position = new Vector2(position);
+        this.initPosition = new Vector2(position);
+        this.initAngle = angle;
         state = TankState.IDLE;
 
         tankTexture = new Texture("tanks/tank1.png");
         tankDestroyedTexture = new Texture("tanks/tank1damaged.png");
         driveSheet = new Texture("tanks/tank1_strip4.png");
+        explosionSheet = new Texture("explosion_strip10.png");
         tankHPTexture = new Texture("hp-mini1.png");
         initAnimations();
 
@@ -156,6 +164,17 @@ public class Tank {
         }
 
         driveAnimation = new Animation<>(0.05f, driveFrames);
+
+        frames = TextureRegion.split(explosionSheet, explosionSheet.getWidth() / 10, explosionSheet.getHeight());
+        TextureRegion[] explosionFrames = new TextureRegion[10];
+        index = 0;
+        for (int i = 0; i < frames.length; i++) {
+            for (int j = 0; j < frames[i].length; j++) {
+                explosionFrames[index++] = frames[i][j];
+            }
+        }
+
+        explosionAnimation = new Animation<>(0.1f, explosionFrames);
     }
 
     public void turn(TurnDirection direction, float amount) {
@@ -196,14 +215,10 @@ public class Tank {
             bulletAngle -= random.nextInt((int) BULLET_SPREAD);
         }
 
-        Vector2 rotationAbsolute = new Vector2(position.x + tankTexture.getWidth() / 2f, position.y + tankTexture.getHeight() / 2f);
-        Vector2 rotatedPoint = new Vector2();
-        rotatedPoint.x = ((position.x - rotationAbsolute.x) * MathUtils.cosDeg(angle)) - ((position.y - rotationAbsolute.y) * MathUtils.sinDeg(angle)) + rotationAbsolute.x;
-        rotatedPoint.y = ((position.x - rotationAbsolute.x) * MathUtils.sinDeg(angle)) + ((position.y - rotationAbsolute.y) * MathUtils.cosDeg(angle)) + rotationAbsolute.y;
+        Vector2 rotationAbsolute = new Vector2(body.getPosition().x, body.getPosition().y);
 
-        float bulletX = (rotatedPoint.x + (GUN_OFFSET_X * MathUtils.cosDeg(angle) - GUN_OFFSET_Y * MathUtils.sinDeg(angle)));
-        float bulletY = (rotatedPoint.y + (GUN_OFFSET_X * MathUtils.sinDeg(angle) + GUN_OFFSET_Y * MathUtils.cosDeg(angle)));
-
+        float bulletX = rotationAbsolute.x + 20 * MathUtils.cosDeg(angle);
+        float bulletY = rotationAbsolute.y + 20 * MathUtils.sinDeg(angle);
         gunshot.play();
         new Bullet(new Vector2(bulletX, bulletY), bulletAngle, world, this);
     }
@@ -229,10 +244,14 @@ public class Tank {
     }
 
     public void update(float dt) {
+        stateTime += dt;
         if(Gdx.input.isKeyJustPressed(Input.Keys.R)) {
             state = TankState.IDLE;
             health = 100;
             body.setType(BodyDef.BodyType.DynamicBody);
+            stateTime = 0;
+            stopWaterDamage();
+            body.setTransform(initPosition, initAngle * MathUtils.degreesToRadians);
         }
         if(state != TankState.DESTROYED) {
             handleInput(dt);
@@ -245,7 +264,6 @@ public class Tank {
 
             angle = body.getAngle() * MathUtils.radiansToDegrees;
 
-            stateTime += dt;
             state = TankState.IDLE;
 
             Iterator<Bullet> bulletIterator = firedBullets.iterator();
@@ -294,6 +312,10 @@ public class Tank {
         batch.begin();
         batch.draw(getTexture(), body.getPosition().x - getTexture().getRegionWidth() / 2, body.getPosition().y - getTexture().getRegionHeight() / 2, getTexture().getRegionWidth() / 2, getTexture().getRegionHeight() / 2, getTexture().getRegionWidth(), getTexture().getRegionHeight(), 1, 1, MathUtils.radiansToDegrees * body.getAngle());
         batch.draw(tankHPTexture, position.x, position.y + 50, (tankHPTexture.getWidth() * (health / 100)), tankHPTexture.getHeight());
+        if(state == TankState.DESTROYED && !explosionAnimation.isAnimationFinished(stateTime)) {
+            TextureRegion explosionFrame = explosionAnimation.getKeyFrame(stateTime, false);
+            batch.draw(explosionFrame, body.getPosition().x - explosionFrame.getRegionWidth() * 2 / 2, body.getPosition().y - explosionFrame.getRegionHeight() * 2 / 2, explosionFrame.getRegionWidth() * 2, explosionFrame.getRegionHeight() * 2);
+        }
         batch.end();
     }
 
@@ -305,6 +327,7 @@ public class Tank {
         health -= damage;
         if(health <= 0) {
             state = TankState.DESTROYED;
+            stateTime = 0;
             explosion.play();
         } else {
             tankHit.play();
