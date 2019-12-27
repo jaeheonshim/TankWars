@@ -81,7 +81,7 @@ public class Bullet {
     private void definePhysics() {
         BodyDef bodydef = new BodyDef();
         bodydef.position.set(position);
-        bodydef.type = BodyDef.BodyType.KinematicBody;
+        bodydef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bodydef);
 
         FixtureDef fixtureDef = new FixtureDef();
@@ -143,7 +143,7 @@ public class Bullet {
         return timer;
     }
 
-    public void handleCollisionWithTank() {
+    public void handleCollision() {
         collisionAnimationST = 0f;
         collided = true;
     }

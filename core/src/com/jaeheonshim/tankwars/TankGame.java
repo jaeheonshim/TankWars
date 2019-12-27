@@ -9,9 +9,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.jaeheonshim.tankwars.screens.PlayScreen;
 
 public class TankGame extends Game {
-	public static final int V_WIDTH = 4 * 168;
-	public static final int V_HEIGHT = 4 * 168;
+	public static final int V_WIDTH = 896;
+	public static final int V_HEIGHT = 448;
 	public static final float PPM = 45;
+
+	public static final float WATER_DAMAGE = 20;
 
 	SpriteBatch batch;
 	

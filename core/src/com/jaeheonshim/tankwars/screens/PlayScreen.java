@@ -62,18 +62,18 @@ public class PlayScreen implements Screen {
         camera = new OrthographicCamera();
         viewport = new FitViewport(TankGame.V_WIDTH, TankGame.V_HEIGHT, camera);
 
-        map = new TmxMapLoader().load("playmap.tmx");
+        map = new TmxMapLoader().load("newmap.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(map);
 
         world = new World(new Vector2(0, 0), true);
         world.setContactListener(new WorldContactListener());
         b2dr = new Box2DDebugRenderer();
 
-        TankInputConfig rightPlayer = new TankInputConfig(Input.Keys.W, Input.Keys.S, Input.Keys.A, Input.Keys.D, Input.Keys.Q);
-        TankInputConfig leftPlayer = new TankInputConfig(Input.Keys.UP, Input.Keys.DOWN, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.SLASH);
+        TankInputConfig leftPlayer = new TankInputConfig(Input.Keys.W, Input.Keys.S, Input.Keys.A, Input.Keys.D, Input.Keys.Q);
+        TankInputConfig rightPlayer = new TankInputConfig(Input.Keys.UP, Input.Keys.DOWN, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.SLASH);
 
-        tank = new Tank(new Vector2(400, 400), world, rightPlayer);
-        tank1 = new Tank(new Vector2(200, 200), world, leftPlayer);
+        tank = new Tank(new Vector2(TankGame.V_WIDTH - 100, TankGame.V_HEIGHT / 2), 180, world, rightPlayer);
+        tank1 = new Tank(new Vector2(100, TankGame.V_HEIGHT / 2), 0, world, leftPlayer);
 
         BodyDef bdef = new BodyDef();
         PolygonShape shape = new PolygonShape();
@@ -82,7 +82,20 @@ public class PlayScreen implements Screen {
 
         pendingDestroyBullets = new HashSet<>();
 
-        for (MapObject object : map.getLayers().get(1).getObjects().getByType(RectangleMapObject.class)) {
+        for (MapObject object : map.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+
+            bdef.type = BodyDef.BodyType.KinematicBody;
+            bdef.position.set((rect.getX() + rect.getWidth() / 2), (rect.getY() + rect.getHeight() / 2));
+
+            body = world.createBody(bdef);
+
+            shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2);
+            fdef.shape = shape;
+            body.createFixture(fdef).setUserData("wall");
+        }
+
+        for (MapObject object : map.getLayers().get(2).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
             bdef.type = BodyDef.BodyType.StaticBody;
@@ -92,7 +105,8 @@ public class PlayScreen implements Screen {
 
             shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2);
             fdef.shape = shape;
-            body.createFixture(fdef);
+            fdef.isSensor = true;
+            body.createFixture(fdef).setUserData("water");
         }
 
         updateCycle = 0;

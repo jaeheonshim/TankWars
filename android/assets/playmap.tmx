@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.4" orientation="orthogonal" renderorder="right-down" width="4" height="4" tilewidth="168" tileheight="168" infinite="0" nextlayerid="7" nextobjectid="15">
+<map version="1.2" tiledversion="1.2.4" orientation="orthogonal" renderorder="right-down" width="6" height="4" tilewidth="168" tileheight="168" infinite="0" nextlayerid="9" nextobjectid="15">
  <tileset firstgid="1" name="background" tilewidth="168" tileheight="168" tilecount="17" columns="0">
   <grid orientation="orthogonal" width="1" height="1"/>
   <tile id="0">
@@ -54,15 +54,63 @@
    <image width="168" height="168" source="maptiles/transitional11.png"/>
   </tile>
  </tileset>
- <layer id="2" name="background" width="4" height="4">
+ <tileset firstgid="18" name="obstacles" tilewidth="168" tileheight="168" tilecount="15" columns="0">
+  <grid orientation="orthogonal" width="1" height="1"/>
+  <tile id="0">
+   <image width="101" height="103" source="../../../Game Assets/Tanks/no shadows/river-arc1.png"/>
+  </tile>
+  <tile id="1">
+   <image width="101" height="103" source="../../../Game Assets/Tanks/no shadows/river-arc2.png"/>
+  </tile>
+  <tile id="2">
+   <image width="101" height="103" source="../../../Game Assets/Tanks/no shadows/river-arc3.png"/>
+  </tile>
+  <tile id="3">
+   <image width="101" height="103" source="../../../Game Assets/Tanks/no shadows/river-arc4.png"/>
+  </tile>
+  <tile id="4">
+   <image width="165" height="76" source="../../../Game Assets/Tanks/no shadows/river-horizontal1.png"/>
+  </tile>
+  <tile id="5">
+   <image width="167" height="63" source="../../../Game Assets/Tanks/no shadows/river-horizontal2.png"/>
+  </tile>
+  <tile id="6">
+   <image width="168" height="85" source="../../../Game Assets/Tanks/no shadows/river-horizontal3.png"/>
+  </tile>
+  <tile id="7">
+   <image width="168" height="60" source="../../../Game Assets/Tanks/no shadows/river-horizontal4.png"/>
+  </tile>
+  <tile id="8">
+   <image width="76" height="165" source="../../../Game Assets/Tanks/no shadows/river-vertical1.png"/>
+  </tile>
+  <tile id="9">
+   <image width="63" height="167" source="../../../Game Assets/Tanks/no shadows/river-vertical2.png"/>
+  </tile>
+  <tile id="10">
+   <image width="85" height="168" source="../../../Game Assets/Tanks/no shadows/river-vertical3.png"/>
+  </tile>
+  <tile id="11">
+   <image width="60" height="168" source="../../../Game Assets/Tanks/no shadows/river-vertical4.png"/>
+  </tile>
+  <tile id="12">
+   <image width="14" height="55" source="../../../Game Assets/Tanks/no shadows/fence.png"/>
+  </tile>
+  <tile id="13">
+   <image width="55" height="14" source="../../../Game Assets/Tanks/no shadows/fence2.png"/>
+  </tile>
+  <tile id="14">
+   <image width="92" height="109" source="../../../Game Assets/Tanks/no shadows/bush.png"/>
+  </tile>
+ </tileset>
+ <layer id="7" name="background" width="6" height="4">
   <data encoding="base64" compression="zlib">
-   eJxjZmBg4IViZiDmAmIWKObDwgep4YZiRiAGABDgAHs=
+   eJxjZmBg4AViZijNCMSCQMwFxCxAzA+l+aBiuMRB+rmBmAlKg8zhBGIAKMAAyg==
   </data>
  </layer>
  <objectgroup id="6" name="barriers">
   <object id="8" x="0" y="0" width="21" height="672"/>
-  <object id="9" x="0" y="651" width="672" height="21"/>
-  <object id="10" x="0" y="0" width="672" height="21"/>
-  <object id="12" x="651" y="0" width="21" height="672"/>
+  <object id="9" x="0" y="651" width="1008" height="21"/>
+  <object id="10" x="0" y="0" width="1006.67" height="21"/>
+  <object id="12" x="987" y="0" width="21" height="672"/>
  </objectgroup>
 </map>

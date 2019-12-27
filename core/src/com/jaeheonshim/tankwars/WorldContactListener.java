@@ -22,14 +22,29 @@ public class WorldContactListener implements ContactListener {
 
             if (bullet.getFiredTank() != tank && tank.getState() != Tank.TankState.DESTROYED && !bullet.isCollided()) {
                 tank.takeDamage(Bullet.BULLET_DAMAGE);
-                bullet.handleCollisionWithTank();
+                bullet.handleCollision();
             }
+        }
+        if((fixtureA.getUserData().equals("wall") ^ fixtureB.getUserData().equals("wall")) && (fixtureA.getUserData() instanceof Bullet ^ fixtureB.getUserData() instanceof Bullet)) {
+            Bullet bullet = (Bullet) (fixtureA.getUserData() instanceof Bullet ? fixtureA.getUserData() : fixtureB.getUserData());
+            bullet.handleCollision();
+        }
+
+        if((fixtureA.getUserData().equals("water") ^ fixtureB.getUserData().equals("water")) && (fixtureA.getUserData() instanceof Tank ^ fixtureB.getUserData() instanceof Tank)) {
+            Tank tank = (Tank) (fixtureA.getUserData() instanceof Tank ? fixtureA.getUserData() : fixtureB.getUserData());
+            tank.takeWaterDamage();
         }
     }
 
     @Override
     public void endContact(Contact contact) {
+        Fixture fixtureA = contact.getFixtureA();
+        Fixture fixtureB = contact.getFixtureB();
 
+        if((fixtureA.getUserData().equals("water") ^ fixtureB.getUserData().equals("water")) && (fixtureA.getUserData() instanceof Tank ^ fixtureB.getUserData() instanceof Tank)) {
+            Tank tank = (Tank) (fixtureA.getUserData() instanceof Tank ? fixtureA.getUserData() : fixtureB.getUserData());
+            tank.stopWaterDamage();
+        }
     }
 
     @Override

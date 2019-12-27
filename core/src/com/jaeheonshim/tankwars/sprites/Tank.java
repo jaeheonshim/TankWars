@@ -41,10 +41,13 @@ public class Tank {
     private float angle;
     private TankState state;
     private float health;
+    private boolean takingWaterDamage = false;
+    private float waterDamageCounter;
 
     private Texture tankTexture;
     private Texture tankDestroyedTexture;
     private Texture tankHPTexture;
+    Texture driveSheet;
     private Animation<TextureRegion> driveAnimation;
 
     private Sound gunshot;
@@ -63,12 +66,13 @@ public class Tank {
 
     private static List<Tank> instances = new ArrayList();
 
-    public Tank(Vector2 position, World world, TankInputConfig config) {
+    public Tank(Vector2 position, float angle, World world, TankInputConfig config) {
         this.position = new Vector2(position);
         state = TankState.IDLE;
 
-        tankTexture = new Texture("tank1.png");
-        tankDestroyedTexture = new Texture("tank1damaged.png");
+        tankTexture = new Texture("tanks/tank1.png");
+        tankDestroyedTexture = new Texture("tanks/tank1damaged.png");
+        driveSheet = new Texture("tanks/tank1_strip4.png");
         tankHPTexture = new Texture("hp-mini1.png");
         initAnimations();
 
@@ -80,10 +84,11 @@ public class Tank {
 
         stateTime = 0f;
         health = 100;
+        waterDamageCounter = 0;
+        this.angle = angle;
 
         bounds = new Polygon(new float[] {position.x, position.y, position.x, position.y + tankTexture.getHeight(), position.x + tankTexture.getWidth(), position.y + tankTexture.getHeight(), position.x + tankTexture.getWidth(), position.y});
         bounds.setOrigin(position.x + tankTexture.getWidth() / 2, position.y + tankTexture.getHeight() / 2);
-        bounds.setRotation(angle);
 
         this.world = world;
         definePhysics();
@@ -93,6 +98,34 @@ public class Tank {
         random = new Random();
 
         this.inputConfig = config;
+
+        body.setTransform(position, angle * MathUtils.degreesToRadians);
+    }
+
+    public Tank(Vector2 position, float angle, World world, TankInputConfig config, TankTexture texture) {
+        this(position, angle, world, config);
+        switch(texture) {
+            case BROWN:
+                tankTexture = new Texture("tanks/tank1.png");
+                tankDestroyedTexture = new Texture("tanks/tank1damaged.png");
+                driveSheet = new Texture("tanks/tank1_strip4.png");
+                break;
+            case GREEN:
+                tankTexture = new Texture("tanks/tank2.png");
+                tankDestroyedTexture = new Texture("tanks/tank2damaged.png");
+                driveSheet = new Texture("tanks/tank2_strip4.png");
+                break;
+            case RED:
+                tankTexture = new Texture("tanks/tank3.png");
+                tankDestroyedTexture = new Texture("tanks/tank3damaged.png");
+                driveSheet = new Texture("tanks/tank3_strip4.png");
+                break;
+            case PURPLE:
+                tankTexture = new Texture("tanks/tank4.png");
+                tankDestroyedTexture = new Texture("tanks/tank4damaged.png");
+                driveSheet = new Texture("tanks/tank4_strip4.png");
+                break;
+        }
     }
 
     public void definePhysics() {
@@ -113,7 +146,6 @@ public class Tank {
 
 
     public void initAnimations() {
-        Texture driveSheet = new Texture("tank1_strip4.png");
         TextureRegion[][] frames = TextureRegion.split(driveSheet, driveSheet.getWidth() / 4, driveSheet.getHeight());
         TextureRegion[] driveFrames = new TextureRegion[4];
         int index = 0;
@@ -226,6 +258,14 @@ public class Tank {
                     bulletIterator.remove();
                 }
             }
+
+            if(takingWaterDamage) {
+                waterDamageCounter += dt;
+                if (waterDamageCounter > 1) {
+                    takeDamage(TankGame.WATER_DAMAGE);
+                    waterDamageCounter = 0;
+                }
+            }
         } else {
             body.setLinearVelocity(0, 0);
             body.setType(BodyDef.BodyType.StaticBody);
@@ -271,6 +311,15 @@ public class Tank {
         }
     }
 
+    public void takeWaterDamage() {
+        takingWaterDamage = true;
+        waterDamageCounter = 100;
+    }
+
+    public void stopWaterDamage() {
+        takingWaterDamage = false;
+    }
+
     public void dispose() {
         tankTexture.dispose();
         tankHit.dispose();
@@ -286,7 +335,7 @@ public class Tank {
     }
 
     public enum TankTexture {
-
+        BROWN, GREEN, RED, PURPLE
     }
 
     public Polygon getBounds() {
