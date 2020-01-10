@@ -22,7 +22,7 @@ import java.util.List;
 
 public class Bullet {
     public static float BULLET_SPEED = 320;
-    public static float BULLET_LIFE_TIME = 2;
+    public static float BULLET_LIFE_TIME = 2.5f;
     public static float BULLET_DAMAGE = 10;
 
     private Vector2 position;

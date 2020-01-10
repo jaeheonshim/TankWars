@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.4" orientation="orthogonal" renderorder="right-down" width="6" height="4" tilewidth="168" tileheight="168" infinite="0" nextlayerid="9" nextobjectid="15">
+<map version="1.2" tiledversion="1.2.4" orientation="orthogonal" renderorder="right-down" width="16" height="8" tilewidth="56" tileheight="56" infinite="0" nextlayerid="8" nextobjectid="19">
  <tileset firstgid="1" name="background" tilewidth="168" tileheight="168" tilecount="17" columns="0">
   <grid orientation="orthogonal" width="1" height="1"/>
   <tile id="0">
@@ -54,7 +54,7 @@
    <image width="168" height="168" source="maptiles/transitional11.png"/>
   </tile>
  </tileset>
- <tileset firstgid="18" name="obstacles" tilewidth="168" tileheight="168" tilecount="15" columns="0">
+ <tileset firstgid="18" name="water" tilewidth="168" tileheight="168" tilecount="12" columns="0">
   <grid orientation="orthogonal" width="1" height="1"/>
   <tile id="0">
    <image width="101" height="103" source="maptiles/river-arc1.png"/>
@@ -92,25 +92,93 @@
   <tile id="11">
    <image width="60" height="168" source="maptiles/river-vertical4.png"/>
   </tile>
-  <tile id="12">
+ </tileset>
+ <tileset firstgid="30" name="objects" tilewidth="93" tileheight="109" tilecount="18" columns="0">
+  <grid orientation="orthogonal" width="1" height="1"/>
+  <tile id="0">
+   <image width="57" height="65" source="maptiles/bridge.png"/>
+  </tile>
+  <tile id="1">
+   <image width="65" height="57" source="maptiles/bridge2.png"/>
+  </tile>
+  <tile id="2">
    <image width="14" height="55" source="maptiles/fence.png"/>
   </tile>
-  <tile id="13">
+  <tile id="3">
    <image width="55" height="14" source="maptiles/fence2.png"/>
   </tile>
-  <tile id="14">
+  <tile id="4">
+   <image width="23" height="15" source="maptiles/box.png"/>
+  </tile>
+  <tile id="5">
    <image width="92" height="109" source="maptiles/bush.png"/>
   </tile>
+  <tile id="6">
+   <image width="75" height="70" source="maptiles/small-tree.png"/>
+  </tile>
+  <tile id="7">
+   <image width="74" height="71" source="maptiles/stone-desert1.png"/>
+  </tile>
+  <tile id="8">
+   <image width="74" height="71" source="maptiles/stone-desert2.png"/>
+  </tile>
+  <tile id="9">
+   <image width="46" height="43" source="maptiles/stone-desert3.png"/>
+  </tile>
+  <tile id="10">
+   <image width="46" height="43" source="maptiles/stone-desert4.png"/>
+  </tile>
+  <tile id="11">
+   <image width="34" height="22" source="maptiles/stone-desert5.png"/>
+  </tile>
+  <tile id="12">
+   <image width="62" height="71" source="maptiles/stone-grass1.png"/>
+  </tile>
+  <tile id="13">
+   <image width="31" height="22" source="maptiles/stone-grass2.png"/>
+  </tile>
+  <tile id="14">
+   <image width="49" height="30" source="maptiles/stone-grass3.png"/>
+  </tile>
+  <tile id="15">
+   <image width="44" height="28" source="maptiles/stone-grass4.png"/>
+  </tile>
+  <tile id="16">
+   <image width="52" height="47" source="maptiles/stone-grass5.png"/>
+  </tile>
+  <tile id="17">
+   <image width="93" height="93" source="maptiles/tree.png"/>
+  </tile>
  </tileset>
- <layer id="7" name="background" width="6" height="4">
+ <layer id="1" name="background" width="16" height="8">
   <data encoding="base64" compression="zlib">
-   eJxjZmBg4AViZijNCMSCQMwFxCxAzA+l+aBiuMRB+rmBmAlKg8zhBGIAKMAAyg==
+   eJxjYBhYwArELEhsGOBiYGjgQuKzQDGyemQ5BjRxdP3IapHtwcXGph+mlxVNjBj9LGgYWQ8rFnFc+tHtxBUu+MIP2Z0AIrEEGw==
   </data>
  </layer>
- <objectgroup id="6" name="barriers">
-  <object id="8" x="0" y="0" width="21" height="672"/>
-  <object id="9" x="0" y="651" width="1008" height="21"/>
-  <object id="10" x="0" y="0" width="1006.67" height="21"/>
-  <object id="12" x="987" y="0" width="21" height="672"/>
+ <layer id="2" name="water" width="16" height="8">
+  <data encoding="base64" compression="zlib">
+   eJxjYBi8QBaKR/XTTj8ACccBXQ==
+  </data>
+ </layer>
+ <objectgroup id="4" name="water">
+  <object id="1" x="410" y="112" width="83" height="214.182"/>
+ </objectgroup>
+ <layer id="3" name="objects" width="16" height="8" opacity="0.9">
+  <data encoding="base64" compression="zlib">
+   eJxjYMAN5KCYXECpfnKAwgDLUxPQI/wBc+8BcQ==
+  </data>
+ </layer>
+ <layer id="7" name="outer walls" width="16" height="8">
+  <data encoding="base64" compression="zlib">
+   eJxTYWBgUMGBYQCXPLo6UsGofuropyT+AK2LBaE=
+  </data>
+ </layer>
+ <objectgroup id="6" name="collision">
+  <object id="3" x="225" y="168" width="12.375" height="111.875"/>
+  <object id="10" x="671.5" y="167.5" width="14" height="112"/>
+  <object id="12" x="0" y="0" width="9" height="447.5"/>
+  <object id="13" x="0" y="0" width="896.03" height="8.5"/>
+  <object id="15" x="888.364" y="0" width="7.63636" height="447.818"/>
+  <object id="17" x="1.27273" y="440.727" width="894.727" height="7.27273"/>
  </objectgroup>
 </map>
