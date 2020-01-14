@@ -35,7 +35,7 @@ public class Tank {
     public static float GUN_OFFSET_X = 53;
     public static float GUN_OFFSET_Y = 20;
 
-    public static float BULLET_SPREAD = 5;
+    public static float BULLET_SPREAD = 0;
     public static float RELOAD_TIME = 2;
 
     private TankInputConfig inputConfig;
