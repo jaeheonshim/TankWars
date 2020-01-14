@@ -200,7 +200,6 @@ public class Tank {
             angle += amount;
             angle = angle > 360 ? angle - ((int) angle) / 360 * 360 : angle;
             body.setAngularVelocity(2);
-            System.out.println(body.getAngle());
         } else if(direction == TurnDirection.RIGHT) {
             angle -= amount;
             float tempAngle = angle < -360 ? angle + ((int) -angle) / 360 * 360 : angle;
