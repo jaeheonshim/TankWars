@@ -263,6 +263,8 @@ public class Tank {
         }
         if (Gdx.input.isKeyJustPressed(inputConfig.getFire())) {
             fire();
+        } else if(Gdx.input.isKeyJustPressed(inputConfig.getReload())) {
+            reload();
         }
     }
 
@@ -379,6 +381,10 @@ public class Tank {
         } else {
             tankHit.play();
         }
+    }
+
+    public void reload() {
+        reloading = true;
     }
 
     public void takeWaterDamage() {

@@ -69,8 +69,8 @@ public class PlayScreen implements Screen {
         world.setContactListener(new WorldContactListener());
         b2dr = new Box2DDebugRenderer();
 
-        TankInputConfig leftPlayer = new TankInputConfig(Input.Keys.W, Input.Keys.S, Input.Keys.A, Input.Keys.D, Input.Keys.Q);
-        TankInputConfig rightPlayer = new TankInputConfig(Input.Keys.UP, Input.Keys.DOWN, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.SLASH);
+        TankInputConfig leftPlayer = new TankInputConfig(Input.Keys.W, Input.Keys.S, Input.Keys.A, Input.Keys.D, Input.Keys.Q, Input.Keys.TAB);
+        TankInputConfig rightPlayer = new TankInputConfig(Input.Keys.UP, Input.Keys.DOWN, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.SLASH, Input.Keys.PERIOD);
 
         tank = new Tank(new Vector2(TankGame.V_WIDTH - 100, TankGame.V_HEIGHT / 2), 180, world, rightPlayer);
         tank1 = new Tank(new Vector2(100, TankGame.V_HEIGHT / 2), 0, world, leftPlayer);
