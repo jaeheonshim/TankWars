@@ -227,10 +227,12 @@ public class Tank {
     public void fire() {
         if(bullets > 0 && !reloading) {
             float bulletAngle = angle;
-            if (random.nextBoolean()) {
-                bulletAngle += random.nextInt((int) BULLET_SPREAD);
-            } else {
-                bulletAngle -= random.nextInt((int) BULLET_SPREAD);
+            if(BULLET_SPREAD > 0) {
+                if (random.nextBoolean()) {
+                    bulletAngle += random.nextInt((int) BULLET_SPREAD);
+                } else {
+                    bulletAngle -= random.nextInt((int) BULLET_SPREAD);
+                }
             }
 
             Vector2 rotationAbsolute = new Vector2(body.getPosition().x, body.getPosition().y);
